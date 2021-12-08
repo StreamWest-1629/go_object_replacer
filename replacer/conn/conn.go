@@ -13,15 +13,15 @@ type (
 	}
 
 	Replacer interface {
-		MakeConverterFromReflect(ty reflect.Type) (converter Converter, err error)
-		MakeMapLikeFromReflect(ty reflect.Type) (maplike MapLike, err error)
+		MakeConverter(ty reflect.Type) (converter Converter, err error)
+		MakeMapLike(ty reflect.Type) (maplike MapLike, err error)
 	}
 )
 
 func MakeConverter(replacer Replacer, target interface{}) (converter Converter, err error) {
-	return replacer.MakeConverterFromReflect(reflect.TypeOf(target))
+	return replacer.MakeConverter(reflect.TypeOf(target))
 }
 
 func MakeMapLike(replacer Replacer, target interface{}) (maplike MapLike, err error) {
-	return replacer.MakeMapLikeFromReflect(reflect.TypeOf(target))
+	return replacer.MakeMapLike(reflect.TypeOf(target))
 }
