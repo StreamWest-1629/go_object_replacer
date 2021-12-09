@@ -4,12 +4,12 @@ import "reflect"
 
 type (
 	Converter interface {
-		Convert(src, dst interface{}) (err error)
+		Convert(src, dstPtr interface{}) (err error)
 	}
 
 	MapLike interface {
 		Converter
-		ValueWithKey(src interface{}, key string) (value interface{}, err error)
+		ValueWithKey(src interface{}, key string) (value interface{}, exist bool)
 	}
 
 	Replacer interface {
