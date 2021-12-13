@@ -4,6 +4,8 @@ import "reflect"
 
 type (
 	Converter interface {
+		// Convert from src to dstPtr's element.
+		// `dstPtr` argument must be pointer.
 		Convert(src, dstPtr interface{}) (err error)
 	}
 

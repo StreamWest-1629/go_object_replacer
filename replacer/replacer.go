@@ -28,6 +28,7 @@ func newController() (ctrl *controller) {
 	return ctrl
 }
 
+// Make converter for any type.
 func MakeConverter(target interface{}) (converter conn.Converter, err error) {
 	return ctrl.MakeConverter(reflect.TypeOf(target))
 }
