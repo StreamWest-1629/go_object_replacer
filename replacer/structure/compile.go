@@ -25,7 +25,7 @@ func (s *Struct) initialize(replacer conn.Replacer, target reflect.Type) error {
 	// initialize myown member
 	*s = Struct{
 		replacer:        replacer,
-		reflects:        s.reflects,
+		reflects:        target,
 		keyMembers:      map[string]Member{},
 		embeddedMembers: []Member{},
 	}

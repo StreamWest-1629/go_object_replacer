@@ -15,12 +15,13 @@ type (
 )
 
 func NewSliceConverter(replacer conn.Replacer, targetElem reflect.Type) (converter conn.Converter, err error) {
-	if conv, err := replacer.MakeConverter(targetElem); err != nil {
+	if conv, err := replacer.MakeConverter(targetElem.Elem()); err != nil {
 		return nil, errors.New("cannot get element converter: " + err.Error())
 	} else {
+		elemType := targetElem.Elem()
 		return &sliceConverter{
 			elemConv: conv,
-			elemType: targetElem,
+			elemType: elemType,
 		}, nil
 	}
 }
@@ -33,9 +34,9 @@ func (sc *sliceConverter) Convert(src, dstPtr interface{}) (err error) {
 		return errors.New("dstPtr argument is not cannot supported: it is not slice's pointer")
 	}
 
-	dstVal = reflect.Indirect(dstVal)
+	dstVal = dstVal.Elem()
 	if dstVal.IsNil() {
-		dstVal = reflect.MakeSlice(sc.elemType, 0, 0)
+		dstVal.Set(reflect.MakeSlice(reflect.SliceOf(sc.elemType), 0, 0))
 	}
 
 	// convert elements
@@ -43,11 +44,12 @@ func (sc *sliceConverter) Convert(src, dstPtr interface{}) (err error) {
 	case reflect.Array, reflect.Slice:
 		for i, l := 0, srcVal.Len(); i < l; i++ {
 
-			elem := reflect.New(dstVal.Type())
-			if err := sc.elemConv.Convert(srcVal.Index(i).Interface(), elem.Addr().Interface()); err != nil {
+			elem := reflect.New(sc.elemType)
+
+			if err := sc.elemConv.Convert(srcVal.Index(i).Interface(), elem.Interface()); err != nil {
 				return errors.New("cannot convert slice's element: " + err.Error())
 			}
-			reflect.Append(dstVal, elem)
+			dstVal.Set(reflect.Append(dstVal, elem.Elem()))
 		}
 	}
 

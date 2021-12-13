@@ -21,11 +21,11 @@ func IntegerConvert(src, dstPtr interface{}) error {
 		}
 	}
 
-	if !srcVal.CanConvert(dstVal.Type()) {
+	if !srcVal.CanConvert(dstVal.Elem().Type()) {
 		return errors.New("src argument cannot convert to dst type")
 	}
 
-	dstVal.Elem().Set(srcVal.Convert(dstVal.Type()))
+	dstVal.Elem().Set(srcVal.Convert(dstVal.Elem().Type()))
 	return nil
 }
 

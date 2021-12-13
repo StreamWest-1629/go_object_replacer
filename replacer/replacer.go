@@ -14,21 +14,11 @@ type (
 	controller struct {
 		structs structure.StructCache
 	}
-	converter struct {
-		conv func(src, dstPtr interface{}) (err error)
-	}
 )
 
 var (
-	ctrl             = newController()
-	integerConverter = converter{conv: builtin.IntegerConvert}
-	boolConverter    = converter{conv: builtin.BoolConvert}
-	stringConverter  = converter{conv: builtin.StringConvert}
+	ctrl = newController()
 )
-
-func (c *converter) Convert(src, dstPtr interface{}) (err error) {
-	return c.conv(src, dstPtr)
-}
 
 func newController() (ctrl *controller) {
 	ctrl = &controller{}
@@ -46,11 +36,11 @@ func (c controller) MakeConverter(ty reflect.Type) (converter conn.Converter, er
 	switch ty.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return &integerConverter, nil
+		return builtin.Integer, nil
 	case reflect.Bool:
-		return &boolConverter, nil
+		return builtin.Bool, nil
 	case reflect.String:
-		return &stringConverter, nil
+		return builtin.String, nil
 	case reflect.Ptr:
 		if build, err := builtin.NewPtrConverter(c, ty); err != nil {
 			return nil, err
@@ -58,7 +48,7 @@ func (c controller) MakeConverter(ty reflect.Type) (converter conn.Converter, er
 			return build, nil
 		}
 	case reflect.Slice:
-		if build, err := builtin.NewPtrConverter(c, ty); err != nil {
+		if build, err := builtin.NewSliceConverter(c, ty); err != nil {
 			return nil, err
 		} else {
 			return build, nil
@@ -69,6 +59,8 @@ func (c controller) MakeConverter(ty reflect.Type) (converter conn.Converter, er
 		} else {
 			return build, nil
 		}
+	case reflect.Map:
+		return builtin.NewMapMapLike(c), nil
 	}
 
 	return nil, errors.New("this type is not supported(type: " + util.TypeFullname(ty) + ")")
@@ -82,6 +74,8 @@ func (c controller) MakeMapLike(ty reflect.Type) (maplike conn.MapLike, err erro
 		} else {
 			return build, nil
 		}
+	case reflect.Map:
+		return builtin.NewMapMapLike(c), nil
 	}
 	return nil, errors.New("this type is not supported(type: " + util.TypeFullname(ty) + ")")
 }

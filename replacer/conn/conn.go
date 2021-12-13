@@ -10,6 +10,7 @@ type (
 	MapLike interface {
 		Converter
 		ValueWithKey(src interface{}, key string) (value interface{}, exist bool)
+		EnumKeys(src interface{}) []string
 	}
 
 	Replacer interface {

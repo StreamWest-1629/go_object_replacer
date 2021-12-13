@@ -37,7 +37,7 @@ func (s *Struct) Convert(src, dstPtr interface{}) (err error) {
 
 			// convert
 			if err := member.converter.Convert(value, dst); err != nil {
-				return errors.New("failed to convert member (type: " + util.TypeFullname(s.reflects) + "): " + err.Error())
+				return errors.New("failed to convert member (key: " + key + ", type: " + util.TypeFullname(s.reflects) + "): " + err.Error())
 			}
 
 		} else if member.requires {
@@ -51,7 +51,7 @@ func (s *Struct) Convert(src, dstPtr interface{}) (err error) {
 
 		// convert
 		if err := s.embeddedMembers[i].converter.Convert(src, dst); err != nil {
-			return errors.New("failed to convert embedded member (type: " + util.TypeFullname(s.reflects) + ")" + err.Error())
+			return errors.New("failed to convert embedded member (type: " + util.TypeFullname(s.reflects) + "): " + err.Error())
 		}
 	}
 
@@ -73,4 +73,13 @@ func (s *Struct) ValueWithKey(src interface{}, key string) (value interface{}, e
 	}
 
 	return nil, false
+}
+
+func (s *Struct) EnumKeys(_ interface{}) []string {
+	keys := make([]string, 0, len(s.keyMembers))
+	for k := range s.keyMembers {
+		keys = append(keys, k)
+	}
+
+	return keys
 }

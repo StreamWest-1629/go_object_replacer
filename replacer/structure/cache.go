@@ -10,7 +10,7 @@ import (
 
 func (sc structCache) MapLike(target reflect.Type) (maplike conn.MapLike, err error) {
 
-	if target.Kind() == reflect.Struct {
+	if target.Kind() != reflect.Struct {
 		return nil, errors.New("target type is not struct")
 	}
 

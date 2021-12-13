@@ -14,13 +14,13 @@ type (
 	}
 )
 
-func NewPtrConverter(replacer conn.Replacer, targetElem reflect.Type) (converter conn.Converter, err error) {
-	if conv, err := replacer.MakeConverter(targetElem); err != nil {
+func NewPtrConverter(replacer conn.Replacer, target reflect.Type) (converter conn.Converter, err error) {
+	if conv, err := replacer.MakeConverter(target.Elem()); err != nil {
 		return nil, errors.New("cannot get element converter: " + err.Error())
 	} else {
 		return &ptrConverter{
 			elemConv: conv,
-			elemType: targetElem,
+			elemType: target.Elem(),
 		}, nil
 	}
 }
@@ -31,8 +31,8 @@ func (s *ptrConverter) Convert(src, dstPtr interface{}) (err error) {
 	// make instance
 	if dstVal.Kind() != reflect.Ptr || dstVal.Elem().Kind() != reflect.Ptr {
 		return errors.New("dstPtr argument is not cannot supported: it is not pointer's pointer")
-	} else if dstVal = reflect.Indirect(dstVal); dstVal.IsNil() {
-		dstVal = reflect.New(s.elemType)
+	} else if dstVal = dstVal.Elem(); dstVal.IsNil() {
+		dstVal.Set(reflect.New(s.elemType))
 	}
 
 	// convert
