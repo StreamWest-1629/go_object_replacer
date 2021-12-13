@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+// Convert from any object to integer.
+// `dstPtr` argument must be integer-type's pointer type.
 func IntegerConvert(src, dstPtr interface{}) error {
 
 	srcVal, dstVal := reflect.ValueOf(src), reflect.ValueOf(dstPtr)
@@ -29,6 +31,8 @@ func IntegerConvert(src, dstPtr interface{}) error {
 	return nil
 }
 
+// Convert from any object to bool.
+// `dstPtr` argument must be bool's pointer type.
 func BoolConvert(src, dstPtr interface{}) error {
 
 	srcVal, srcOk := src.(bool)

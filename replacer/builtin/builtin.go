@@ -20,7 +20,10 @@ func (m *MapLike) ValueWithKey(src interface{}, key string) (value interface{}, 
 }
 
 var (
+	// Converter object for Integer.
 	Integer = &Converter{conv: IntegerConvert}
-	Bool    = &Converter{conv: BoolConvert}
-	String  = &Converter{conv: StringConvert}
+	// Converter object for Bool.
+	Bool = &Converter{conv: BoolConvert}
+	// Converter object for String.
+	String = &Converter{conv: StringConvert}
 )

@@ -14,11 +14,13 @@ type (
 	}
 )
 
-func NewSliceConverter(replacer conn.Replacer, targetElem reflect.Type) (converter conn.Converter, err error) {
-	if conv, err := replacer.MakeConverter(targetElem.Elem()); err != nil {
+// Make converter from any object (slice) to slice object.
+// Returned converter can convert to only targetSlice's type.
+func NewSliceConverter(replacer conn.Replacer, targetSlice reflect.Type) (converter conn.Converter, err error) {
+	if conv, err := replacer.MakeConverter(targetSlice.Elem()); err != nil {
 		return nil, errors.New("cannot get element converter: " + err.Error())
 	} else {
-		elemType := targetElem.Elem()
+		elemType := targetSlice.Elem()
 		return &sliceConverter{
 			elemConv: conv,
 			elemType: elemType,
@@ -26,6 +28,8 @@ func NewSliceConverter(replacer conn.Replacer, targetElem reflect.Type) (convert
 	}
 }
 
+// Convert from any object (src argument) to slice object.
+// `dstPtr` argument must be slice's pointer type.
 func (sc *sliceConverter) Convert(src, dstPtr interface{}) (err error) {
 
 	// make slice instance

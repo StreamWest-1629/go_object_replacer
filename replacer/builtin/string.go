@@ -12,6 +12,7 @@ type StringConvertible interface {
 	String() string
 }
 
+// Make converter from any object to string object.
 func StringConvert(src, dst interface{}) error {
 
 	dst_str, ok := dst.(*string)

@@ -13,12 +13,15 @@ type (
 	}
 )
 
+// Make converter from any map-like object to map object.
 func NewMapMapLike(replacer conn.Replacer) (maplike conn.MapLike) {
 	return &mapMapLike{
 		replacer: replacer,
 	}
 }
 
+// Convert from any map-like object to map object.
+// `dstPtr argument must be only (*map[string]interface{}) object yet.`
 func (m *mapMapLike) Convert(src, dstPtr interface{}) (err error) {
 
 	maplike, err := m.replacer.MakeMapLike(reflect.TypeOf(src))
